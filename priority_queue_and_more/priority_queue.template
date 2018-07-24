@@ -1,0 +1,97 @@
+//
+// Created by Arman on 7/29/2016.
+//
+
+#include "priority_queue.h"
+
+template <typename T>
+priority_queue<T>::priority_queue() {
+    data=new T[SIZE];
+    count=0;
+}
+
+template <typename T>
+priority_queue<T>::priority_queue(const priority_queue& copy) {
+    data=new T[SIZE];
+    count=copy.size();
+
+    for(size_t i=0;i<copy.size();i++)
+    {
+        data[i]=copy.data[i];
+    }
+
+}
+
+template <typename T>
+priority_queue<T>::~priority_queue() {
+    delete[] data;
+}
+
+template <typename T>
+void priority_queue<T>::push(const T & value) {
+    assert(count<SIZE);
+    if (count==0) {
+    data[count++]=value;}
+    else {
+        if(data[(count-1)]<value ) {data[count++]=value;}
+        else {
+            int index=count-1;
+            while(data[index]>value && index!=-1){
+                    index--;
+            }
+            if (index==-1) {  index=0; }
+            else {index++;}
+
+            T* temp=new T[SIZE];
+            for(size_t i=index;i<count;i++) {
+                temp[i]=data[i];
+            }
+            for(size_t c=index;c<=count;c++) {
+                data[c+1]=temp[c];
+            }
+            data[index]=value;
+            count++;
+            delete temp;
+
+        }
+    }
+
+}
+
+template <typename T>
+T priority_queue<T>::top() const {
+    assert(count>0);
+    return data[count-1];
+}
+
+template <typename T>
+void priority_queue<T>::pop() {
+    assert(count>0);
+    data[count-1]=-1;
+    count--;
+}
+
+template <typename T>
+bool priority_queue<T>::empty() const {
+    return count==0;
+}
+
+template <typename T>
+int priority_queue<T>::size() const {
+    assert(count>=0);
+    return count;
+}
+
+template <typename T>
+
+priority_queue<T>&  priority_queue<T>::operator=(const priority_queue<T> & equal) {
+
+    count=equal.size();
+    for(size_t i=0;i<equal.size();i++)
+    {
+        data[i]=equal.data[i];
+    }
+}
+
+
+
