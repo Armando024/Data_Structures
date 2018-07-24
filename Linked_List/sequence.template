@@ -1,0 +1,321 @@
+//
+// Created by Arman on 7/19/2016.
+//
+#include "sequence.h"
+#include <iostream>
+#include <cassert>
+using namespace std;
+template <typename T>
+sequence<T>::sequence() {
+    frontptr    = nullptr;
+    tailptr     = nullptr;
+    currently   = nullptr;
+    temp        = nullptr;
+    size=0;
+}
+
+template <typename T>
+sequence<T>::sequence(const sequence& copy) {
+    //if the list is empty
+    frontptr    = nullptr;
+    temp        = nullptr;
+    tailptr     = nullptr;
+    currently   = nullptr;
+    size=0;
+
+    temp=copy.frontptr;
+    while(temp != nullptr) {
+        insert(temp->get_item());
+        temp=temp->get_next();
+    }
+
+}
+
+template <typename T>
+sequence<T>::~sequence() {
+
+    currently=frontptr;
+    while(currently!= nullptr) {
+        node* old=currently;
+        currently=currently->get_next();
+        delete old;
+    }
+    size=0;
+}
+
+template <typename T>
+void sequence<T>::insert(const T& x) {
+
+    node* A=new node;
+    A->set_item(x);
+    A->set_next(nullptr);
+
+    if (frontptr != nullptr) {
+        currently=frontptr;
+        while(currently->get_next() != nullptr) {
+            currently=currently->get_next();
+        }
+        currently->set_next(A);
+        tailptr=A;
+        size++;
+    }
+    else {
+        frontptr=A;
+        tailptr=A;
+        size++;
+    }
+}
+template <typename T>
+void sequence<T>::insert_first(const T& x) {
+    node* first=new node;
+    first->set_item(x);
+    first->set_next(frontptr);
+    frontptr=first;
+    size++;
+}
+template <typename T>
+void sequence<T>::erase_first() {
+    node* deleteptr;
+    deleteptr=frontptr;
+    frontptr=frontptr->get_next();
+    delete deleteptr;
+
+    size--;
+}
+
+template <typename T>
+void sequence<T>::erase_last() {
+    node* deleteptr;
+    currently=frontptr;
+    while(currently->get_next() != tailptr) {
+        currently=currently->get_next();
+    }
+    deleteptr=tailptr;
+    tailptr=currently;
+    tailptr->set_next(nullptr);
+    delete deleteptr;
+    size--;
+}
+
+
+template <typename T>
+void sequence<T>::erase_occurence(int z, const T& r) {
+    node* deleteptr;
+    currently=frontptr;
+    if (frontptr->get_item()==r && z==1) {erase_first();
+       size--; return;}
+    int count=0;
+    while(currently!= nullptr) {
+        if (currently->get_item()==r) {count++;}
+        if (count==z) {
+            if (currently==tailptr) {erase_last(); return;}
+            deleteptr=currently;
+            temp->set_next(currently->get_next());
+            currently=temp;
+            delete deleteptr;
+            size--;
+            return;
+        }
+        temp=currently;
+    currently=currently->get_next();
+    }
+    }
+
+
+template <typename T>
+void sequence<T>::erase_from(int x) {
+        assert(x<=(size-1));
+    node* deleteptr;
+    currently=frontptr;
+    while( currently!= nullptr && x!=0 ) {
+        temp=currently;
+         currently=currently->get_next();
+        x--;
+    }
+
+    if (currently==frontptr) {erase_first();}
+    else if( currently==tailptr) {erase_last();}
+    else {
+        temp->set_next(currently->get_next());
+        deleteptr=currently;
+        currently=temp;
+        delete deleteptr;
+        size--;
+    }
+
+}
+
+template <typename T>
+void sequence<T>::insert_at(const T& value, int index) {
+    assert(index<=(size));
+    if (index==0) {insert_first(value);
+        return;}
+    if (index==(size)) {insert(value);
+        return;}
+
+    currently=frontptr;
+    while(currently != nullptr && index!=0) {
+        temp=currently;
+        currently=currently->get_next();
+        index--;
+    }
+
+    node* B=new node(value,temp->get_next());
+    temp->set_next(B);
+
+}
+
+template <typename T>
+T sequence<T>::get_element(int get) const {
+    node* temp23Ptr;
+    temp23Ptr=frontptr;
+
+    while(temp23Ptr!= nullptr && get!=0){
+        temp23Ptr=temp23Ptr->get_next();
+        get--;
+    }
+    return temp23Ptr->get_item();
+
+}
+
+template <typename T>
+int sequence<T>::sequence_count() const {
+    return size;
+}
+
+template <typename T>
+void sequence<T>::erase_all_occurence( const T& x) {
+    currently=frontptr;
+    temp=frontptr;
+    while (currently != nullptr) {
+        if (currently==frontptr && currently->get_item() == x) {
+            node* deleteptr;
+            deleteptr=frontptr;
+            frontptr=frontptr->get_next();
+            currently=frontptr;
+            temp=frontptr;
+            delete deleteptr;
+            size--;
+        }
+        else if ( currently->get_item() == x) {
+            node* deleteptr;
+            deleteptr=currently;
+            temp->set_next(currently->get_next());
+            currently=temp;
+            delete deleteptr;
+            size--;
+        }
+        temp=currently;
+        currently=currently->get_next();
+    }
+}
+
+template <typename T>
+sequence<T> &sequence<T>::operator=(const sequence<T>& equal) {
+
+    if(frontptr!= nullptr) {
+        currently=frontptr;
+        while(currently!= nullptr) {
+            node* old=currently;
+            currently=currently->get_next();
+            delete old;
+        }
+        size=0;
+        currently= nullptr;
+        frontptr= nullptr;
+        temp= nullptr;
+        tailptr= nullptr;
+    }
+
+     if (frontptr== nullptr) {
+         temp=equal.frontptr;
+         while(temp!= nullptr) {
+         insert( temp->get_item() );
+             temp=temp->get_next();
+         }
+     }
+
+}
+
+template <typename T>
+sequence<T> sequence<T>::operator+=(const sequence<T>& result) {
+
+    temp=result.frontptr;
+    while(temp!= nullptr) {
+        insert(temp->get_item());
+        temp=temp->get_next();
+    }
+
+return *this;
+}
+
+template <typename T>
+sequence<T> operator+(const sequence<T>& one, const sequence<T>& two) {
+  sequence<T> resultado=one;
+    resultado+=two;
+    return resultado;
+
+}
+
+template <typename T>
+bool sequence<T>::operator==(const sequence<T>& one) {
+    if (one.size != size) {return false;}
+    else {
+        node* first =one.frontptr;
+        temp=frontptr;
+        while(first!= nullptr && temp!= nullptr){
+            if (first->get_item()!=temp->get_item()) {
+                return false;
+            }
+            first=first->get_next();
+            temp=temp->get_next();
+        }
+    }
+
+    return true;
+}
+
+template <typename T>
+std::ostream &operator << (std::ostream& outs, sequence<T>& theone) {
+
+    theone.temp=theone.frontptr;
+
+    while(theone.temp!= nullptr) {
+        outs<<theone.temp->get_item()<<endl;
+        theone.temp=theone.temp->get_next();
+    }
+    return outs;
+
+}
+
+template <typename T>
+std::istream &operator>>(std::istream& inside,sequence<T>& armando) {
+        armando.Only_for_console_input();
+    inside>>armando.tailptr->items;
+    return inside;
+    }
+
+template <typename T>
+const T& sequence<T>::operator[](int index) const{
+    assert(index<size);
+    node* temp2;
+    temp2=frontptr;
+    while(temp2!= nullptr && index!=0) {
+        index--;
+        temp2=temp2->get_next();
+    }
+    return temp2->get_item();
+
+}
+
+template <typename T>
+T& sequence<T>::operator[](int index) {
+    assert(index<size);
+    temp=frontptr;
+    while(temp!= nullptr && index!=0) {
+        index--;
+        temp=temp->get_next();
+    }
+    return temp->items;
+
+}
