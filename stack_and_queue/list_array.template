@@ -1,0 +1,146 @@
+
+
+
+template <typename T>
+list_array<T>::list_array() {
+    count=0;
+}
+
+template <typename T>
+void list_array<T>::insert_at_head(const T& data) {
+    count++;
+    if (main.empty()) {main.push(data);
+        return; }
+    else {
+
+        while(!main.empty()) {
+            temp.push(main.top());
+            main.pop();
+        }
+        main.push(data);
+        while(!temp.empty()) {
+            main.push(temp.top());
+            temp.pop();
+        }
+    }
+}
+
+template <typename T>
+T list_array<T>::get_data(const int &index) const {
+    assert(index<=count-1);
+    int index2=count-1;
+
+    std::stack<T> tempmain=main;
+    std::stack<T> temp4;
+
+    while(index!=index2) {
+        temp4.push(tempmain.top());
+        tempmain.pop();
+        index2--;
+    }
+
+    /*
+    while(index2!=count-1) {
+        main.push(temp.top());
+        temp.pop();
+        index2++;
+    }
+     */
+    return tempmain.top();
+}
+
+template <typename T>
+void list_array<T>::remove_from_head() {
+    if(count==1) {main.pop();
+    count--;
+        return;
+    }
+    while(!main.empty()) {
+        temp.push(main.top());
+        main.pop();
+    }
+    temp.pop();
+    while( !temp.empty() ) {
+        main.push(temp.top());
+        temp.pop();
+    }
+    count--;
+}
+
+template <typename T>
+void list_array<T>::insert_at_tail(const T & value) {
+
+    main.push(value);
+    count++;
+}
+
+template <typename T>
+void list_array<T>::remove_from_tail() {
+
+    main.pop();
+    count--;
+}
+
+template <typename T>
+int list_array<T>::get_length() const {
+    return count;
+}
+
+template <typename T>
+void list_array<T>::remove_from(int index) {
+    assert(index<=count-1);
+    int index2=count-1;
+    while(index!=index2) {
+        temp.push(main.top());
+        main.pop();
+        index2--;
+    }
+    main.pop();
+    while(index2!=count-1) {
+        main.push(temp.top());
+        temp.pop();
+        index2++;
+    }
+    count--;
+}
+
+template <typename T>
+void list_array<T>::insert_at(int index, const T &data) {
+    assert(index<=count-1);
+    int index2=count-1;
+    while(index!=index2) {
+        temp.push(main.top());
+        main.pop();
+        index2--;
+    }
+    main.push(data);
+    while(index2!=count-1) {
+        main.push(temp.top());
+        temp.pop();
+        index2++;
+    }
+}
+
+template <typename T>
+list_array<T>::list_array( const list_array<T>& copying) {
+            count=0;
+
+
+        while(copying.get_length() != count) {
+            main.push(copying.get_data(count));
+            count++;
+        }
+        count=copying.get_length();
+}
+
+template <typename T>
+list_array<T>& list_array<T>::operator=(const list_array<T>& equal ) {
+    count=0;
+    while(equal.get_length() != count) {
+        main.push(equal.get_data(count));
+        count++;
+    }
+    count=equal.get_length();
+
+}
+

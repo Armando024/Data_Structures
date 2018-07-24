@@ -1,0 +1,71 @@
+
+template <typename A>
+stack<A>::stack(size_t size) {
+    this->size=size;
+    data=new A[this->size];
+    count=0;
+}
+
+template <typename A>
+void stack<A>::push(const A & value) {
+    data[count++]=value;
+}
+
+template <typename A>
+void stack<A>::pop() {
+    data[count--]=0;
+}
+
+template <typename A>
+bool stack<A>::empty() const {
+    return count==0;
+}
+
+template <typename A>
+stack<A>::~stack() {
+    count=0;
+    delete data;
+
+}
+template <typename A>
+stack<A>::stack(const stack<A> & one) {
+    if (size!=one.size) {
+        delete[] data;
+        data=new A[one.size];
+        count=0;
+    }
+    for (size_t i=0;i<one.count;i++) {
+        data[i]=one.data[i];
+    }
+count=one.count;
+    size=one.size;
+}
+
+template <typename A>
+
+size_t stack<A>::get_count() const {
+    return count;
+}template <typename A>
+
+size_t stack<A>::get_size() const {
+    return size;
+}
+
+template <typename A>
+stack<A> &stack<A>::operator=(const stack<A>& copy ) {
+    if (size != copy.size) {
+        delete[] data;
+        data=new A[copy.size];
+    }
+    for (size_t i=0;i<copy.count;i++) {
+        data[i]=copy.data[i];
+    }
+count=copy.count;
+
+    return *this;
+}
+
+template <typename A>
+const A& stack<A>::top()const {
+    return data[count-1];
+}

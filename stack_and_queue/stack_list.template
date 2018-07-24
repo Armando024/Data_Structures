@@ -1,0 +1,131 @@
+
+#include "stack_list.h"
+namespace Armando_Linked_List {
+
+    template<typename T>
+    stack_list<T>::stack_list() {
+        headPtr = nullptr;
+        tailPtr = nullptr;
+        temp = nullptr;
+        count=0;
+    }
+
+    template <typename T>
+    stack_list<T>::stack_list(const stack_list<T>& copy) {
+        headPtr   = nullptr;
+        tailPtr   = nullptr;
+        temp      = nullptr;
+        count=0;
+        temp=copy.headPtr;
+        while(temp != nullptr) {
+            push(temp->get_item());
+            temp=temp->get_next();
+        }
+
+    }
+
+    template<typename T>
+    void stack_list<T>::push(const T &value) {
+        node* in=new node;
+        in->set_item(value);
+        in->set_next(nullptr);
+
+        if (headPtr != nullptr) {
+          tailPtr->set_next(in);
+            tailPtr=in;
+            count++;
+        }
+        else {
+            headPtr = in;
+            tailPtr = in;
+            count++;
+        }
+    }
+
+    template<typename T>
+    void stack_list<T>::pop() {
+        node* deletePtr;
+        if (headPtr==tailPtr) {
+            deletePtr=headPtr;
+            headPtr= nullptr;
+            tailPtr= nullptr;
+            temp= nullptr;
+            count=0;
+            delete deletePtr;
+            return;
+        }
+        temp=headPtr;
+        while (temp->get_next() != tailPtr) {
+            temp = temp->get_next();
+        }
+        deletePtr = tailPtr;
+        tailPtr=temp;
+        tailPtr->set_next(nullptr);
+        delete deletePtr;
+        count--;
+    }
+
+    template <typename T>
+    bool stack_list<T>::empty() const {
+
+        return tailPtr== nullptr;
+    }
+
+    template <typename T>
+    const int& stack_list<T>::size() const {
+        return count;
+    }
+
+    template <typename T>
+const T stack_list<T>::top() const {
+        return tailPtr->get_item();
+    }
+
+    template <typename T>
+    stack_list<T>& stack_list<T>::operator=(const stack_list <T>& equal) {
+
+        if(headPtr!= nullptr) {
+            temp=headPtr;
+            while(temp!= nullptr) {
+                node* old=temp;
+                temp=temp->get_next();
+                delete old;
+            }
+            count=0;
+            headPtr= nullptr;
+            tailPtr= nullptr;
+            temp= nullptr;
+        }
+
+        if (headPtr== nullptr) {
+            temp=equal.headPtr;
+            while(temp!= equal.tailPtr) {
+                push( temp->get_item() );
+                temp=temp->get_next();
+            }
+        }
+        return *this;
+    }
+
+template <typename T>
+stack_list<T>::~stack_list() {
+    temp=headPtr;
+    while(temp!= nullptr) {
+        node * deleptr=temp;
+        temp=temp->get_next();
+        delete deleptr;
+    }
+    headPtr= nullptr;
+    tailPtr= nullptr;
+    temp= nullptr;
+    count=0;
+}
+
+
+
+}
+
+
+
+
+
